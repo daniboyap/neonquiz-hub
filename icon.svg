@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Fundo circular para garantir contraste -->
+  <circle cx="256" cy="256" r="256" fill="#000000"/>
+
+  <!-- Segmento Superior Esquerdo (Laranja/Vermelho) -->
+  <path d="M256 256 L0 256 A256 256 0 0 1 256 0 Z" fill="#FF5722"/>
+  
+  <!-- Segmento Superior Direito (Vermelho/Rosa) -->
+  <path d="M256 256 L256 0 A256 256 0 0 1 512 256 Z" fill="#F44336"/>
+  
+  <!-- Segmento Inferior Direito (Azul Escuro) -->
+  <path d="M256 256 L512 256 A256 256 0 0 1 256 512 Z" fill="#1A237E"/>
+  
+  <!-- Segmento Inferior Esquerdo (Ciano/Teal) -->
+  <path d="M256 256 L256 512 A256 256 0 0 1 0 256 Z" fill="#00BCD4"/>
+  
+  <!-- Círculo Central Amarelo -->
+  <circle cx="256" cy="256" r="140" fill="#FFEB3B"/>
+  
+  <!-- Ponto de Interrogação (Azul Escuro) -->
+  <path d="M226 350c-0.5 22 18 40 40 40 22 0 40-18 40-40 0-22-18-40-40-40 -21.5 0-39.5 17.5-40 40zM256 120c-48 0-85 35-85 85 0 15 12 26 26 26 14 0 25-11 26-25 1-22 20-36 42-33 14 2 23 15 22 29 -1 16-14 25-26 32 -16 9-28 23-30 42 -1 9 6 16 15 16 8 0 14-6 15-14 2-22 23-33 41-43 12-7 25-16 30-31 8-23 1-49-16-66 -16-15-38-21-60-20z" fill="#1A237E"/>
+</svg>
