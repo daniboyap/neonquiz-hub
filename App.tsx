@@ -1,75 +1,68 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, HelpCircle, Heart, Sparkles, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MAIN_CATEGORIES, TECH_CATEGORIES, getIcon } from './constants';
-import { Category, ViewState } from './types';
+import { Menu, X, Trophy, HelpCircle, Heart, Star } from 'lucide-react';
+import { Category, ViewState, QuizQuestion } from './types';
+import { categories, getIcon } from './constants';
 import { QuizGame } from './components/QuizGame';
 import { AboutPage, ServicesPage } from './components/StaticPages';
+import { Leaderboard } from './components/Leaderboard';
+import { ErrorHistory } from './components/ErrorHistory';
+
+type TabType = 'general' | 'tech' | 'favorites';
 
 interface CategoryCardProps {
     cat: Category;
     isFav: boolean;
-    onToggleFavorite: (id: string, e: React.MouseEvent) => void;
+    onToggleFavorite: (id: string) => void;
     onStartQuiz: (cat: Category) => void;
 }
 
-const CategoryCard: React.FC<CategoryCardProps> = ({ cat, isFav, onToggleFavorite, onStartQuiz }) => {
+function CategoryCard({ cat, isFav, onToggleFavorite, onStartQuiz }: CategoryCardProps) {
     const Icon = getIcon(cat.iconName);
 
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            whileHover={{ scale: 1.02, borderColor: '#a855f7' }}
+            whileHover={{ scale: 1.02, y: -5 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => onStartQuiz(cat)}
-            className="relative rounded-2xl p-5 cursor-pointer group overflow-hidden border transition-all duration-300 bg-surface border-white/10 hover:border-neon/50 flex flex-col h-full min-h-[180px]"
+            className="relative group"
         >
-            {/* Background Icon decoration */}
-            <div className="absolute -top-4 -right-4 opacity-10 group-hover:opacity-20 transition text-neon pointer-events-none rotate-12">
-                <Icon size={100} />
-            </div>
-
-            {/* Content Wrapper */}
-            <div className="relative z-10 flex-1">
-                <div className="flex items-center mb-4">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center transition bg-neon/10 text-neon group-hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]">
-                        <Icon size={20} />
-                    </div>
-                    <h3 className="ml-3 font-bold text-lg text-white truncate pr-2">{cat.title}</h3>
-                </div>
-                
-                {/* Description with padding bottom to avoid overlap with heart */}
-                <p className="text-sm text-gray-400 leading-relaxed pb-8 line-clamp-3">
-                    {cat.description}
-                </p>
-                
-                {isFav && (
-                    <div className="absolute top-0 right-0 flex items-center text-[10px] text-neon font-bold uppercase tracking-wider bg-neon/10 px-2 py-1 rounded-bl-lg border-b border-l border-neon/20">
-                        <Sparkles size={10} className="mr-1" /> Salvo
-                    </div>
-                )}
-            </div>
-
-            {/* Favorite Button - Explicit Bottom Right Positioning with High Z-Index */}
-            <motion.button
-                whileTap={{ scale: 0.8 }}
-                onClick={(e) => onToggleFavorite(cat.id, e)}
-                className="absolute bottom-3 right-3 z-30 p-3 rounded-full bg-black/40 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-neon/50 transition-all shadow-lg group-hover:scale-110"
-                aria-label={isFav ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            <div className="absolute inset-0 bg-gradient-to-br from-neon/20 to-purple-900/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div
+                onClick={() => onStartQuiz(cat)}
+                className="relative bg-surface border border-white/5 hover:border-neon/50 rounded-2xl p-6 cursor-pointer overflow-hidden transition-all duration-300 shadow-lg hover:shadow-neon"
             >
-                <Heart 
-                    size={20} 
-                    className={`transition-all duration-300 ${isFav ? 'fill-pink-500 text-pink-500 drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]' : 'text-gray-500 group-hover:text-gray-300'}`} 
-                />
-            </motion.button>
+                <div className="absolute top-0 right-0 p-4 z-10">
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onToggleFavorite(cat.id); }}
+                        className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                    >
+                        <Heart
+                            size={20}
+                            className={`transition-all duration-300 ${isFav ? 'fill-pink-500 text-pink-500 scale-110' : 'text-gray-500 hover:text-pink-400'}`}
+                        />
+                    </button>
+                </div>
+
+                <div className="flex flex-col items-center text-center space-y-4">
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-gray-800 to-black border border-white/10 group-hover:border-neon/50 transition-colors shadow-inner">
+                        <Icon size={40} className="text-neon group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-bold text-white mb-1 group-hover:text-neon transition-colors">{cat.title}</h3>
+                        <p className="text-xs text-gray-400 line-clamp-2">{cat.description}</p>
+                    </div>
+                    <div className="w-full pt-3 border-t border-white/5 flex justify-between items-center text-xs text-gray-500 font-mono">
+                        <span>15s / questão</span>
+                        <span className="px-2 py-1 rounded bg-white/5 text-gray-300">Iniciar</span>
+                    </div>
+                </div>
+            </div>
         </motion.div>
     );
-};
-
-type TabType = 'general' | 'tech' | 'favorites';
+}
 
 export default function App() {
     const [view, setView] = useState<ViewState>('HOME');
@@ -77,29 +70,21 @@ export default function App() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<TabType>('general');
     const [favorites, setFavorites] = useState<string[]>([]);
+    const [revisionQuestions, setRevisionQuestions] = useState<QuizQuestion[]>([]);
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
 
-    // Load favorites on mount
+    // Load favorites from local storage
     useEffect(() => {
-        const storedFavs = localStorage.getItem('neonquiz_favorites');
-        if (storedFavs) {
-            try {
-                setFavorites(JSON.parse(storedFavs));
-            } catch (e) {
-                console.error("Error loading favorites", e);
-            }
+        const saved = localStorage.getItem('neonquiz_favorites');
+        if (saved) {
+            setFavorites(JSON.parse(saved));
         }
-        // PWA body color
-        document.body.style.backgroundColor = '#000000';
     }, []);
 
-    const toggleFavorite = (id: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        let newFavs;
-        if (favorites.includes(id)) {
-            newFavs = favorites.filter(favId => favId !== id);
-        } else {
-            newFavs = [...favorites, id];
-        }
+    const toggleFavorite = (id: string) => {
+        const newFavs = favorites.includes(id)
+            ? favorites.filter(f => f !== id)
+            : [...favorites, id];
         setFavorites(newFavs);
         localStorage.setItem('neonquiz_favorites', JSON.stringify(newFavs));
     };
@@ -113,55 +98,57 @@ export default function App() {
         setView(target);
         setIsMenuOpen(false);
         setSelectedCategory(null);
+        setRevisionQuestions([]); // Clear revision questions when navigating
     };
 
-    // Combine all categories to find favorites easily
-    const ALL_CATEGORIES = [...MAIN_CATEGORIES, ...TECH_CATEGORIES];
-    
-    // Determine which categories to display
-    let displayedCategories: Category[] = [];
-    if (activeTab === 'general') {
-        displayedCategories = MAIN_CATEGORIES;
-    } else if (activeTab === 'tech') {
-        displayedCategories = TECH_CATEGORIES;
-    } else {
-        displayedCategories = ALL_CATEGORIES.filter(cat => favorites.includes(cat.id));
-    }
+    const displayedCategories = categories.filter(c => {
+        if (activeTab === 'favorites') return favorites.includes(c.id);
+        return c.type === activeTab;
+    });
 
     return (
-        <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden flex flex-col">
-            
-            {/* Navigation Header */}
+        <div className="min-h-screen bg-background text-gray-100 font-sans selection:bg-neon selection:text-white flex flex-col">
+            {/* Header */}
             {view !== 'GAME' && (
-                <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
+                <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/5">
                     <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-                        <button onClick={() => setIsMenuOpen(true)} className="p-2 text-neon hover:bg-white/5 rounded-lg transition">
-                            <Menu size={24} />
-                        </button>
-                        
-                        <div className="text-center cursor-pointer" onClick={() => handleNav('HOME')}>
-                            <h1 className="text-xl font-black tracking-tighter text-white drop-shadow-[0_0_5px_rgba(168,85,247,0.5)]">
+                        <div className="flex items-center gap-4">
+                            <button onClick={() => setIsMenuOpen(true)} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+                                <Menu className="text-white" />
+                            </button>
+                            <h1 className="text-2xl font-black tracking-tighter text-white cursor-pointer" onClick={() => handleNav('HOME')}>
                                 NeonQuiz <span className="text-neon">Hub</span>
                             </h1>
                         </div>
-
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon to-purple-900 flex items-center justify-center shadow-neon">
-                            <HelpCircle size={20} className="text-white" />
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => handleNav('HISTORY')}
+                                className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-neon"
+                                title="Histórico de Erros"
+                            >
+                                <HelpCircle size={20} />
+                            </button>
+                            <button
+                                onClick={() => setShowLeaderboard(true)}
+                                className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-yellow-400"
+                                title="Ranking"
+                            >
+                                <Trophy size={20} />
+                            </button>
                         </div>
                     </div>
                 </header>
             )}
 
-            {/* Mobile Drawer Menu */}
             <AnimatePresence>
                 {isMenuOpen && (
                     <>
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             className="fixed inset-0 bg-black/80 z-[60]"
                             onClick={() => setIsMenuOpen(false)}
                         />
-                        <motion.div 
+                        <motion.div
                             initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                             className="fixed top-0 left-0 bottom-0 w-64 bg-surface border-r border-white/10 z-[70] p-6 flex flex-col"
@@ -183,10 +170,14 @@ export default function App() {
                 )}
             </AnimatePresence>
 
+            <AnimatePresence>
+                {showLeaderboard && <Leaderboard onClose={() => setShowLeaderboard(false)} />}
+            </AnimatePresence>
+
             {/* Main Content Area */}
             <main className="flex-1 w-full max-w-4xl mx-auto relative">
                 {view === 'HOME' && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                         className="pb-12"
                     >
@@ -228,7 +219,7 @@ export default function App() {
                             {/* Content Grid or Empty State */}
                             <AnimatePresence mode="wait">
                                 {activeTab === 'favorites' && displayedCategories.length === 0 ? (
-                                    <motion.div 
+                                    <motion.div
                                         key="empty-favorites"
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -244,7 +235,7 @@ export default function App() {
                                         </p>
                                     </motion.div>
                                 ) : (
-                                    <motion.div 
+                                    <motion.div
                                         key={activeTab} // Force re-render on tab change for animation
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -253,9 +244,9 @@ export default function App() {
                                         className="grid grid-cols-1 sm:grid-cols-2 gap-4"
                                     >
                                         {displayedCategories.map((cat) => (
-                                            <CategoryCard 
-                                                key={cat.id} 
-                                                cat={cat} 
+                                            <CategoryCard
+                                                key={cat.id}
+                                                cat={cat}
                                                 isFav={favorites.includes(cat.id)}
                                                 onToggleFavorite={toggleFavorite}
                                                 onStartQuiz={handleStartQuiz}
@@ -268,13 +259,28 @@ export default function App() {
                     </motion.div>
                 )}
 
-                {view === 'GAME' && selectedCategory && (
-                    <QuizGame category={selectedCategory} onExit={() => handleNav('HOME')} />
+                {view === 'GAME' && (selectedCategory || revisionQuestions.length > 0) && (
+                    <QuizGame
+                        category={selectedCategory || undefined}
+                        customQuestions={revisionQuestions.length > 0 ? revisionQuestions : undefined}
+                        onExit={() => handleNav('HOME')}
+                    />
                 )}
 
                 {view === 'ABOUT' && <AboutPage onBack={() => handleNav('HOME')} />}
-                
+
                 {view === 'SERVICES' && <ServicesPage onBack={() => handleNav('HOME')} />}
+
+                {view === 'HISTORY' && (
+                    <ErrorHistory
+                        onBack={() => handleNav('HOME')}
+                        onStartRevision={(questions) => {
+                            setRevisionQuestions(questions);
+                            setSelectedCategory(null);
+                            setView('GAME');
+                        }}
+                    />
+                )}
 
             </main>
 

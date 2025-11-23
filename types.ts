@@ -10,9 +10,10 @@ export interface Category {
     title: string;
     description: string;
     iconName: string; // Mapping to Lucide icons string key
+    type: 'tech' | 'general';
 }
 
-export type ViewState = 'HOME' | 'GAME' | 'ABOUT' | 'SERVICES';
+export type ViewState = 'HOME' | 'GAME' | 'ABOUT' | 'SERVICES' | 'HISTORY';
 
 export interface GameState {
     questions: QuizQuestion[];
